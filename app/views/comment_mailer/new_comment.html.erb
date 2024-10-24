@@ -1,0 +1,4 @@
+<h1>New Comment on Your Post</h1>
+<p><%= @comment.body %></p>
+<p>Posted by: <%= @comment.user.name %></p>
+<p>View your post <a href="<%= post_url(@post) %>">here</a>.</p>

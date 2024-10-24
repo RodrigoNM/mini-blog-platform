@@ -1,0 +1,83 @@
+networks:
+  main:
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: mini-blog-postgres
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - main
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 5s
+      timeout: 1s
+      retries: 3
+
+  redis:
+    image: redis:6
+    container_name: mini-blog-redis
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - main
+    volumes:
+      - db_data:/var/lib/redis/data
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: redis-cli ping
+      interval: 5s
+      timeout: 1s
+      retries: 3
+
+  mini_blog_platform:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mini-blog-platform-web
+    command: /bin/bash -c "rm -f tmp/pids/server.pid && bin/rails server -b 0.0.0.0"
+    tty: true
+    stdin_open: true
+    networks:
+      - main
+    volumes:
+      - .:/var/www/mini-blog-platform
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: curl -I http://localhost:3000
+      interval: 10s
+      timeout: 1s
+      retries: 3
+
+  sidekiq:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mini-blog-sidekiq
+    command: bundle exec sidekiq -c 1 -v
+    tty: true
+    stdin_open: true
+    networks:
+      - main
+    volumes:
+      - .:/var/www/mini-blog-platform
+    depends_on:
+      - redis
+      - postgres
+
+volumes:
+  db_data:

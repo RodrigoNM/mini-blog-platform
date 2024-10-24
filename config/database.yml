@@ -1,0 +1,26 @@
+# PostgreSQL. Make sure to install the pg gem.
+# gem install pg
+#
+# Ensure the pg gem is defined in your Gemfile
+# gem "pg"
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: <%= ENV.fetch("PG_USERNAME") %>
+  password: <%= ENV.fetch("PG_PASSWORD") %>
+  host: localhost
+  port: 5432
+
+development:
+  <<: *default
+  database: mini_blog_application_development
+
+test:
+  <<: *default
+  database: mini_blog_application_test
+
+production:
+  <<: *default
+  database: mini_blog_application_production
