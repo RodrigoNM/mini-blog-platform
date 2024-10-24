@@ -10,7 +10,7 @@ gem "puma", ">= 5.0"
 # gem "jbuilder"
 # Use Redis adapter to run Action Cable in production
 gem "redis", "~> 4.0"
-gem "dalli", "~> 2.7", ">= 2.7.6"
+gem "dalli", "~> 3.2"
 
 gem "devise"
 gem "devise-jwt"
