@@ -15,7 +15,7 @@ gem "dalli", "~> 2.7", ">= 2.7.6"
 gem "devise"
 gem "devise-jwt"
 gem "pundit"
-gem "sidekiq", "~> 6.0"
+gem "sidekiq", "~> 7.3"
 
 gem "pg_search"
 
